@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Distributer</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@mui/material@5/umd/material-ui.production.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amazon+Ember:wght@400;500;700&display=swap" />
+  <style>
+    @font-face {
+      font-family: 'Amazon Ember';
+      src: url('https://m.media-amazon.com/images/G/01/sc/ember/Amazon-Ember-Regular.woff2') format('woff2');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Amazon Ember';
+      src: url('https://m.media-amazon.com/images/G/01/sc/ember/Amazon-Ember-Medium.woff2') format('woff2');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: 'Amazon Ember';
+      src: url('https://m.media-amazon.com/images/G/01/sc/ember/Amazon-Ember-Bold.woff2') format('woff2');
+      font-weight: 700;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Amazon Ember', sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const {
+      Box, AppBar, Toolbar, Typography, IconButton, Avatar, Drawer, List, ListItem,
+      ListItemButton, ListItemText, ListItemIcon, Collapse, Divider, Button, TextField,
+      Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip,
+      Stack, Select, MenuItem, InputLabel, FormControl, Stepper, Step, StepLabel,
+      createTheme, ThemeProvider, CssBaseline, Icon, Tooltip
+    } = MaterialUI;
+
+    const theme = createTheme({
+      shape: { borderRadius: 12 },
+      typography: {
+        fontFamily: "'Amazon Ember', sans-serif",
+      },
+      palette: {
+        primary: { main: '#6A1B9A' },
+        secondary: { main: '#1e40af' },
+      },
+    });
+
+    const sidebarWidth = 200;
+
+    const tableData = [
+      { id: 'GRD-001', type: 'Deploy', name: 'Main checking', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-002', type: 'Online', name: 'High-yield savings', freq: 'Weekly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-003', type: 'Deploy', name: 'Primary credit card', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-004', type: 'Online', name: 'Investment portfolio', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-005', type: 'Deploy', name: 'Digital wallet', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-006', type: 'Delete', name: 'Petty cash', freq: 'Weekly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-007', type: 'Deploy', name: 'Business operating account', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-008', type: 'Online', name: 'Administration', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-009', type: 'Deploy', name: 'Equipment', freq: 'Weekly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-010', type: 'Delete', name: 'Joint household account', freq: 'Weekly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-011', type: 'Delete', name: 'Protection', freq: 'Weekly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+      { id: 'GRD-012', type: 'Online', name: 'Guard', freq: 'Monthly', code: '007', variance: '1.2347', vendor: 'John', owner: 'Rob' },
+    ];
+
+    const regionsData = tableData.slice(0, 9);
+
+    function getTypeColor(type) {
+      switch(type) {
+        case 'Deploy': return '#22c55e';
+        case 'Online': return '#f59e0b';
+        case 'Delete': return '#ef4444';
+        default: return '#666';
+      }
+    }
+
+    function getStatusColor(status) {
+      switch(status) {
+        case 'Remove': return '#ef4444';
+        case 'Add': return '#2563eb';
+        default: return '#666';
+      }
+    }
+
+    const subTableData = [
+      { code: 'ABD-001', field: 'Product', category: 'Business', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Shop', category: 'Shop', status: 'Add', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Grocery budget', status: 'Remove', sourceAccount: '3322', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Transport', status: 'Add', sourceAccount: '2345', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Shop', status: 'Remove', sourceAccount: '5778', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Field', category: 'Emergency fund', status: 'Add', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Market', status: 'Add', sourceAccount: '4332', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Medium', category: 'Mortgage', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Market', status: 'Add', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Medium', category: 'Transport', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Rent', status: 'Add', sourceAccount: '5577', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Shop', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Market', status: 'Add', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Medium', category: 'Transport', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Shop', status: 'Remove', sourceAccount: '2245', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Design', category: 'Healthcare', status: 'Add', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Medium', category: 'Subscription', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Medium', category: 'Transport', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Shop', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Shop', status: 'Add', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+      { code: 'ABD-001', field: 'Product', category: 'Market', status: 'Remove', sourceAccount: '0007', assignee: 'Gaurav D', date: '02:29 May 7, 2026' },
+    ];
+
+    function AccordionRow({ row }) {
+      const [open, setOpen] = React.useState(false);
+
+      return (
+        <React.Fragment>
+          <TableRow hover sx={{ cursor: 'pointer', '& td': { py: 0.8 } }} onClick={() => setOpen(!open)}>
+            <TableCell>
+              <Icon sx={{ fontSize: 14, color: '#999', transition: 'transform 0.2s', transform: open ? 'rotate(90deg)' : 'none' }}>
+                chevron_right
+              </Icon>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body2" sx={{ color: '#2563eb', fontWeight: 500, cursor: 'pointer' }}>
+                {row.id}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="body2" sx={{ color: getTypeColor(row.type), fontWeight: 500 }}>
+                {row.type}
+              </Typography>
+            </TableCell>
+            <TableCell>{row.name}</TableCell>
+            <TableCell>{row.freq}</TableCell>
+            <TableCell>{row.code}</TableCell>
+            <TableCell>{row.variance}</TableCell>
+            <TableCell>{row.vendor}</TableCell>
+            <TableCell>{row.owner}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell sx={{ p: 0, borderBottom: open ? '1px solid #eee' : 'none' }} colSpan={9}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box sx={{ mx: 2, my: 1 }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ bgcolor: '#f9f9f9' }}>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Code</TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Field</TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Category</TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Status</TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Source Account</TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Assignee</TableCell>
+                        <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Date</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {subTableData.map((sub, idx) => (
+                        <TableRow key={idx} sx={{ '& td': { py: 0.5 } }}>
+                          <TableCell sx={{ fontSize: 12 }}>{sub.code}</TableCell>
+                          <TableCell sx={{ fontSize: 12 }}>{sub.field}</TableCell>
+                          <TableCell sx={{ fontSize: 12 }}>{sub.category}</TableCell>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontSize: 12, color: getStatusColor(sub.status), fontWeight: 500 }}>
+                              {sub.status}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ fontSize: 12 }}>{sub.sourceAccount}</TableCell>
+                          <TableCell sx={{ fontSize: 12 }}>{sub.assignee}</TableCell>
+                          <TableCell sx={{ fontSize: 12 }}>{sub.date}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Box>
+              </Collapse>
+            </TableCell>
+          </TableRow>
+        </React.Fragment>
+      );
+    }
+
+    function DataTable({ rows }) {
+      return (
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ width: 30 }}></TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Account ID</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Request Type</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Frequency</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Code</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Variance</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Vendor</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Owner</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <AccordionRow key={row.id} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      );
+    }
+
+    function SectionPanel({ title, rows }) {
+      const [hovered, setHovered] = React.useState(false);
+
+      return (
+        <Paper variant="outlined" sx={{ mb: 3, borderRadius: '12px', overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, bgcolor: '#fafafa', borderBottom: '1px solid #eee' }}>
+            <Box
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              sx={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                border: '1px solid #ccc', borderRadius: '30px', px: 3, py: 1.5,
+                minWidth: 480, cursor: 'pointer', position: 'relative'
+              }}
+            >
+              <Box>
+                <Typography variant="caption" sx={{ color: '#999', display: 'block', lineHeight: 1 }}>{title}</Typography>
+                <Typography variant="body1" sx={{ color: '#555', mt: 0.5 }}>Gaurav (10:10 AM, May 7, 2026)</Typography>
+              </Box>
+              <Stack direction="row" spacing={1} alignItems="center">
+                {hovered && (
+                  <Icon sx={{ fontSize: 18, color: '#999', cursor: 'pointer' }}>close</Icon>
+                )}
+                <Icon sx={{ fontSize: 18, color: '#666' }}>expand_more</Icon>
+              </Stack>
+            </Box>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <IconButton size="small"><Icon>download</Icon></IconButton>
+              <IconButton size="small"><Icon>filter_list</Icon></IconButton>
+              <Button variant="outlined" size="small" endIcon={<Icon>expand_more</Icon>} sx={{ borderRadius: '12px', textTransform: 'none' }}>
+                Resources
+              </Button>
+            </Stack>
+          </Box>
+          <DataTable rows={rows} />
+        </Paper>
+      );
+    }
+
+    function App() {
+      const [changeRequestOpen, setChangeRequestOpen] = React.useState(true);
+
+      return (
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            {/* Header */}
+            <AppBar position="static" elevation={1} sx={{ bgcolor: '#fff', color: '#333' }}>
+              <Toolbar sx={{ justifyContent: 'space-between' }}>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <IconButton><Icon>apps</Icon></IconButton>
+                  <Typography variant="h6" sx={{ fontWeight: 600, fontSize: 15 }}>Budget Distributer</Typography>
+                </Stack>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IconButton><Icon>chat_bubble_outline</Icon></IconButton>
+                  <Tooltip title="Settings" placement="top" enterDelay={250}>
+                    <IconButton><Icon>settings</Icon></IconButton>
+                  </Tooltip>
+                  <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>John</Typography>
+                  <Avatar sx={{ width: 30, height: 30 }} src="avatar.png" alt="John" />
+                </Stack>
+              </Toolbar>
+            </AppBar>
+
+            <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+              {/* Sidebar */}
+              <Box sx={{ width: sidebarWidth, bgcolor: '#fff', borderRight: '1px solid #e0e0e0', overflow: 'auto' }}>
+                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #eee' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Budget Planner</Typography>
+                  <IconButton size="small"><Icon>chevron_left</Icon></IconButton>
+                </Box>
+                <List dense>
+                  <ListItemButton><ListItemText primary="Home" /></ListItemButton>
+                  <ListItemButton><ListItemText primary="Exploration" /></ListItemButton>
+                  <ListItemButton onClick={() => setChangeRequestOpen(!changeRequestOpen)} sx={{ bgcolor: '#f3e8ff', borderLeft: '3px solid #7c3aed' }}>
+                    <ListItemText primary="Change Request" primaryTypographyProps={{ fontWeight: 600, color: '#7c3aed' }} />
+                    <Icon>{changeRequestOpen ? 'expand_less' : 'expand_more'}</Icon>
+                  </ListItemButton>
+                  <Collapse in={changeRequestOpen}>
+                    <List dense disablePadding>
+                      <ListItemButton sx={{ pl: 4 }}><ListItemText primary="Reports" /></ListItemButton>
+                      <ListItemButton sx={{ pl: 4, bgcolor: '#f3e8ff' }}><ListItemText primary="Values" primaryTypographyProps={{ color: '#7c3aed', fontWeight: 500 }} /></ListItemButton>
+                      <ListItemButton sx={{ pl: 4 }}><ListItemText primary="Code Inputs" /></ListItemButton>
+                    </List>
+                  </Collapse>
+                  <ListItemButton><ListItemText primary="History" /><Icon sx={{ fontSize: 18 }}>expand_more</Icon></ListItemButton>
+                  <ListItemButton><ListItemText primary="Review Requests" /></ListItemButton>
+                  <ListItemButton><ListItemText primary="System Dictionary" /><Icon sx={{ fontSize: 18 }}>expand_more</Icon></ListItemButton>
+                </List>
+              </Box>
+
+              {/* Main Content */}
+              <Box sx={{ flex: 1, overflow: 'auto', p: 3, bgcolor: '#fafafa' }}>
+                {/* Stepper Bar */}
+                <Paper sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: '#6A1B9A', p: 1.5, px: 3, mb: 3, borderRadius: '12px' }}>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <TextField
+                      value="RemovingVendor"
+                      size="small"
+                      InputProps={{ readOnly: true, sx: { bgcolor: '#fff', borderRadius: '8px', fontWeight: 500 } }}
+                      sx={{ width: 220 }}
+                    />
+                    <Box sx={{ width: 40, height: 2, bgcolor: '#22c55e' }} />
+                    <Avatar sx={{ width: 28, height: 28, bgcolor: '#22c55e', fontSize: 14 }}>✓</Avatar>
+                    <Box sx={{ width: 40, height: 2, bgcolor: '#22c55e' }} />
+                    <Avatar sx={{ width: 28, height: 28, bgcolor: '#f59e0b', fontSize: 14 }}>2</Avatar>
+                    <Typography variant="caption" sx={{ color: '#fff' }}>Inputs</Typography>
+                    <Box sx={{ width: 40, height: 2, bgcolor: '#ccc' }} />
+                    <Avatar sx={{ width: 28, height: 28, bgcolor: '#3b82f6', fontSize: 14 }}>3</Avatar>
+                  </Stack>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <IconButton size="small" sx={{ color: '#fff' }}>
+                      <Icon sx={{ fontSize: 16 }}>info_outline</Icon>
+                    </IconButton>
+                    <Button variant="contained" size="small" sx={{ bgcolor: '#1e40af', textTransform: 'none', borderRadius: '8px' }}>Go Back</Button>
+                    <Button variant="contained" size="small" sx={{ bgcolor: '#7c3aed', textTransform: 'none', borderRadius: '8px' }}>Next</Button>
+                  </Stack>
+                </Paper>
+
+                {/* Sections */}
+                <SectionPanel title="Particulars" rows={tableData} />
+                <SectionPanel title="Regions" rows={regionsData} />
+              </Box>
+            </Box>
+          </Box>
+        </ThemeProvider>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
